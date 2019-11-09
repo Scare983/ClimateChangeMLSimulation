@@ -149,13 +149,9 @@ def getCh4():
         else:
             break
 
-
-
-
-
-
 def updateCh4():
     pass
+
 
 def getWeather():
     pass
