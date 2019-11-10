@@ -176,8 +176,9 @@ prossargs()
 if argumentHash['ch4']:
     getCh4()
 if argumentHash['weather']:
-    getWeather()
+    getWeather()  # This needs to be implemented
 if argumentHash['sf6']:
-    getSf6()
+    getSf6() # this one file that is found and downloaded.
 if argumentHash['n02']:
+    # this is one file, found and downloaded to folder
     getN02()
