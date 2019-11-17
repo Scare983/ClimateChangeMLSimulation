@@ -10,7 +10,7 @@ class DateMod():
     dayDataFrame = None
     def __init__(self, df, colValName):
         self.month_to_days(df,colValName)
-
+        #TODO: fill in nan values created from months_to_day (They will = 0) to predicted ones.
     # testing on ch4, go up to 2014
     #returns dataframe with datetime as index, and values for each day given
     def month_to_days(self, df, colValName):
@@ -42,8 +42,8 @@ class DateMod():
         # TODO HERE:  add dates after the end date of the given df to equal 2019.... maybe..
         df = pd.DataFrame(dateVals, index=dateObjs, columns=[colValName])
         self.dayDataFrame = df
-        self.monthDataFrame = df[colValName].resample('M').sum()
-        self.weekDataFrame = df[colValName].resample('W').sum()
+        self.monthDataFrame = pd.DataFrame(df[colValName].resample('M').sum(), columns=[colValName])
+        self.weekDataFrame = pd.DataFrame(df[colValName].resample('W').sum(), columns=[colValName])
 
 
 #graph single dataframesUse.  Use this to determine how to create a function for past values
@@ -56,18 +56,35 @@ def graph_all(self, combinedDataFrame):
     pass
 
 
-    # if called from main, we want to test this file, so create dataframes and pass em in.
+# if called from main, we want to test this file, so create dataframes and pass em in.
+# TODO: might want to put graph_all, and graph_weekly into new class, along with our training models.
 def test_code():
     sf6_data = pd.read_csv('./data/Sf6/sf6_mm_gl.csv', header=0)
     sf6_obj = DateMod(sf6_data, 'average')
     n2o_data = pd.read_csv('./data/N2o/n2o_mm_gl.csv',header=0)
     n2o_obj = DateMod(n2o_data, 'average')
+
+
+    listOfCh4 = []
+    i = 0
     for file in glob.glob('./data/Ch4/*'):
         ch4_data = pd.read_csv(file, header=0)
-        ch4_obj = DateMod(ch4_data, 'value')
-        #print(ch4_obj.monthDataFrame)
-        break
+        listOfCh4.append(DateMod(ch4_data, 'value'))
 
+        if i==10:
+            break
+        i+=1
+    joinedCH4 = pd.DataFrame()
+    # concat all dataframes we made, and create sum
+    for ch4DataFrame in listOfCh4:
+        joinedCH4 = pd.concat([joinedCH4, ch4DataFrame.monthDataFrame], axis=1)
+
+    # aggregate each column to get sum of all of the files we scraped.
+    joinedCH4 = joinedCH4.agg('sum',axis=1)
+
+
+    # Don't know how to do these conversion.  Need help.
+    co2_data = pd.read_csv('./data/CO2Emission/global.1751_2014.csv', header=0)
 
 if __name__ == '__main__':
     test_code()
