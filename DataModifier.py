@@ -85,7 +85,7 @@ def test_code():
 
     # Don't know how to do these conversion.  Need help.
     co2_data = pd.read_csv('./data/CO2Emission/global.1751_2014.csv', header=0)
-
+    # TODO: parse weather data, parse Co2 data
 if __name__ == '__main__':
     test_code()
     pass
