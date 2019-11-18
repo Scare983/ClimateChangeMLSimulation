@@ -1,7 +1,7 @@
 from datetime import datetime
 import pandas as pd
 import glob
-
+from CityObj import CityObjModel
 #change this class to contioulsy run in future.
 
 ##MAIN##
@@ -45,8 +45,14 @@ for file in glob.glob("./data/weather/*City*"):
 #cityCountryDict has City as key, Location : [longitude, latitude], time: [{WEEK TIMESTAMP : weather}...*]. Each child will find data to fit with its parent classes to pass data to it.  (read the csv, etc.)
 
 #TODO: pass each City into a City Class.  There we will store info, and on first instantiation, those classes will call
-
-
+# once we create the states with all the cities, converge them based on same states.
+cityList = []
+for city in cityCountryDict.keys():
+    cityList.append(CityObjModel(longitude=cityCountryDict[city]['Location'][0],latitude=cityCountryDict[city]['Location'][1], cityName=city, timeTempDict=cityCountryDict[city]['time']))
+    break
+for city in cityList:
+    city.getStateName()
+    break
 
 #Once city populated, inf. while loop to get input for a city/state/country day(the next days sf6/co2/ch4/etc
 # levels will be calculted and put into the model we have trained to predict #

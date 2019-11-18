@@ -18,6 +18,8 @@ class CityObjModel(StateObj):
         self.timeTempDict = timeTempDict
         StateObj.__init__(self, self.longitude,self.latitude)
 
+        ## TODO: FIGURE OUT how all city classes go into one stateobj
+
     def getCityName(self):
         return self.cityName
 
