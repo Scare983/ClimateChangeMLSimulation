@@ -58,7 +58,7 @@ def graph_all(self, combinedDataFrame):
 
 # if called from main, we want to test this file, so create dataframes and pass em in.
 # TODO: might want to put graph_all, and graph_weekly into new class, along with our training models.
-def test_code():
+def test_code(debug):
     sf6_data = pd.read_csv('./data/Sf6/sf6_mm_gl.csv', header=0)
     sf6_obj = DateMod(sf6_data, 'average')
     n2o_data = pd.read_csv('./data/N2o/n2o_mm_gl.csv',header=0)
@@ -86,6 +86,31 @@ def test_code():
     # Don't know how to do these conversion.  Need help.
     co2_data = pd.read_csv('./data/CO2Emission/global.1751_2014.csv', header=0)
     # TODO: parse weather data, parse Co2 data
+
+    for file in glob.glob("./data/weather/*City*"):
+        print(file)
+        weatherCityData = pd.read_csv(file, header=0, index_col='dt', infer_datetime_format=True)
+
+        for key, item in weatherCityData.groupby('City'):
+            print(f'{key}{item}')
+        break
+
+def usage():
+    print('python DataModifier [-d]')
+
+##MAIN METHOD##
 if __name__ == '__main__':
-    test_code()
-    pass
+    import getopt
+    import sys
+    debug = False
+    try:
+        opt, args = getopt.getopt(sys.argv[1:], "d")
+    except getopt.GetoptError:
+        usage()
+        sys.exit(2)
+    for opts, arg in opt:
+        if opts == '-d':
+            debug = True
+
+
+    test_code(debug)
