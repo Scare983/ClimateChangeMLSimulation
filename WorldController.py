@@ -1,4 +1,4 @@
-
+from datetime import datetime
 import pandas as pd
 import glob
 
@@ -15,13 +15,14 @@ import glob
 
 cityCountryDict = {}
 for file in glob.glob("./data/weather/*City*"):
-    print(file)
     weatherCityData = pd.read_csv(file, header=0, index_col='dt', infer_datetime_format=True)
     weatherCityData = weatherCityData[weatherCityData['Country'] == 'United States' ]
+
     weatherGroup = weatherCityData.groupby(['Longitude', 'Latitude'])
+
     for  key, item in weatherGroup:
         for city in item.City.unique():
-            cityCountryDict[city]   =  [*item.Longitude.unique(), *item.Latitude.unique()]
+            cityCountryDict[city]   =  {'Location': [*item.Longitude.unique(), *item.Latitude.unique()]}
     break
 
 for file in glob.glob("./data/weather/*City*"):
@@ -32,13 +33,21 @@ for file in glob.glob("./data/weather/*City*"):
     for key in cityCountryDict.keys():
         #pd.DataFrame(weatherCityData['AverageTemperature'].resample('W').sum(), columns=['AverageTemperature'])
         weatherDict = weatherCityData[weatherCityData['City'] == key].resample('W').mean()['AverageTemperature']
-        #weatherDictIndex = weatherDict.index
-        #weatherDictValue = weatherDict.AverageTemperature
-        #cityCountryDict[key] =  weatherDict
-        print(pd.DataFrame(weatherDict).index)
-
+        i = 0
+        cityCountryDict[key]['time'] = []
+        for date in weatherDict.index.to_pydatetime():
+            otherDict = {date.strftime("%Y-%M-%W"): weatherDict.values[i]}
+            cityCountryDict[key]['time'].append(otherDict)
+            i+=1
     break
-print(cityCountryDict)
+
+
+#cityCountryDict has City as key, Location : [longitude, latitude], time: [{WEEK TIMESTAMP : weather}...*]. Each child will find data to fit with its parent classes to pass data to it.  (read the csv, etc.)
+
+#TODO: pass each City into a City Class.  There we will store info, and on first instantiation, those classes will call
+
+
+
 #Once city populated, inf. while loop to get input for a city/state/country day(the next days sf6/co2/ch4/etc
 # levels will be calculted and put into the model we have trained to predict #
 #given a day, calculate greenhouse level gasses from our formula, and input to city params to be processed with given data
