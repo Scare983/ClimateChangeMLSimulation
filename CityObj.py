@@ -1,5 +1,4 @@
-from StateObj import StateObj
-class CityObjModel(StateObj):
+class CityObjModel():
     #One class that creates the model
     # pass in dict with Country
 
@@ -7,24 +6,28 @@ class CityObjModel(StateObj):
         # train model here.
         self.longitude = longitude
         self.latitude = latitude
-        if type(longitude) is not float:
-            if  longitude[-1] == 'E' or longitude[-1] == 'W' :
-                self.longitude = parseLong(longitude)
-            if latitude[-1] == 'N' or latitude[-1] == 'S':
-                self.latitude = parseLat(latitude)
-        else:
-            pass
         self.cityName = cityName
         self.timeTempDict = timeTempDict
-        StateObj.__init__(self, self.longitude,self.latitude)
 
         ## TODO: FIGURE OUT how all city classes go into one stateobj
 
     def getCityName(self):
         return self.cityName
 
-    def getStateName(self):
-        return super().getStateName()
+
+    def getLongLat(self):
+        return self.longitude, self.longitude
+
+    #train based on the data inside of this data we have.  This is for future use in case we want each city to have predictions, otherwise it will be generalized in class calling cities
+    def trainCityTemp(self, sf6, n2o, co2, ch4):
+        #use long/latitude as well.
+
+        #if there is data in our dict, we use it to train, otherwise we must find a location near the long/latitude of this, and use their model with our longitude/latitude.
+        pass
+
+    #give a week as datetime, longitude,latitude, predict
+    def predictCityTemp(self):
+        pass
 
 
 def parseLong( longitude): #east negative
@@ -38,9 +41,8 @@ def parseLat( latitude): #north south
         return  (-1) *float(latitude.replace('S', ''))
     else:
         return float(latitude.replace('N', ''))
-    # create State Obj, Country Obj
 
 
 ## testing ##
 if __name__ == '__main__':
-    print(CityObjModel(longitude='40.99N' , latitude='80.95W', cityName='Johns Creek').getStateName())
+    print(CityObjModel(longitude='40.99N' , latitude='80.95W', cityName='Johns Creek'))

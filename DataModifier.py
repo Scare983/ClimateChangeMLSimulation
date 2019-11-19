@@ -85,15 +85,7 @@ def test_code(debug):
 
     # Don't know how to do these conversion.  Need help.
     co2_data = pd.read_csv('./data/CO2Emission/global.1751_2014.csv', header=0)
-    # TODO: parse weather data, parse Co2 data
 
-    for file in glob.glob("./data/weather/*City*"):
-        print(file)
-        weatherCityData = pd.read_csv(file, header=0, index_col='dt', infer_datetime_format=True)
-
-        for key, item in weatherCityData.groupby('City'):
-            print(f'{key}{item}')
-        break
 
 def usage():
     print('python DataModifier [-d]')
