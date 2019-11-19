@@ -36,10 +36,10 @@ joinedCH4 = joinedCH4.agg('sum',axis=1)
 co2_data = pd.read_csv('./data/CO2Emission/global.1751_2014.csv', header=0)
 
 
-print(joinedCH4)
+#print(joinedCH4)
 
-#mainControl = WorldController()
-
+mainControl = WorldController()
+mainControl.train_long_lat_model(None,None,None,None)
 
 
 

@@ -64,16 +64,24 @@ class WorldController:
                      state.createCity(longitude=cityCountryDict[city]['Location'][0], latitude=cityCountryDict[city]['Location'][1], cityName=city, data=cityCountryDict[city]['time'])
                      #need this break.  Found the state.
                      break
-            #remove break
-             break
+                 if cityStateName == 'StateNA':
+                     state.createCity(longitude=cityCountryDict[city]['Location'][0], latitude=cityCountryDict[city]['Location'][1], cityName=city, data=cityCountryDict[city]['time'])
+                     break
+
+
         # this is only class attribute that will be used
         self.states = allStates
 
     def train_long_lat_model(self,sf6, n2o, co2, ch4):
         longLatDF = pd.DataFrame()
+        i = 1
         for state in self.states:
-            for city in state.getCitiesObj():
 
+            for city in state.getCitiesObj():
+                print(f'{i}  {state.getStateName()}  {city.getCityName()} {city.getLongLat()}')
+
+
+            i+=1
     def train_state_models(self):
         stateModel = "" # should be linear/log model
         for state in self.states:
