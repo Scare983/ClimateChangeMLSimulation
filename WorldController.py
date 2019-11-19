@@ -65,7 +65,7 @@ class WorldController:
                      #need this break.  Found the state.
                      break
             #remove break
-             break
+
         # this is only class attribute that will be used
         self.states = allStates
 
@@ -73,7 +73,7 @@ class WorldController:
         longLatDF = pd.DataFrame()
         for state in self.states:
             for city in state.getCitiesObj():
-
+                print(city.getLongLat())
     def train_state_models(self):
         stateModel = "" # should be linear/log model
         for state in self.states:
