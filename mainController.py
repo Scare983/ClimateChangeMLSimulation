@@ -33,9 +33,12 @@ joinedCH4 = joinedCH4.agg('sum',axis=1)
 
 
 # Don't know how to do these conversion.  Need help.
+#ignoring the per capita data, we will use the yearly carbon emmision data and divide it into days then weeks and months
 co2_data = pd.read_csv('./data/CO2Emission/global.1751_2014.csv', header=0)
-
-
+co2_data = co2_data.set_index("Year")
+co2_data = co2_data.rename(columns={'Total carbon emissions from fossil fuel consumption and cement production (million metric tons of C)':'CarbonEmissions'})
+co2_data = co2_data.loc[:,['CarbonEmissions']]
+co2_data = co2_data.drop(co2_data.index[0])
 #print(joinedCH4)
 
 mainControl = WorldController()

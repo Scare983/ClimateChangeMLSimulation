@@ -28,7 +28,8 @@ class DateMod():
                     for days in range(1, (monthrange(int(df.year[0]) + year, month)[1])):
                         dateObjs.append(datetime.datetime(1960+year, month, days))
                         dateVals.append(np.nan)
-
+        elif df.year[0] != 1960:
+            raise Exception('the year given has not been accounted for')
         # add known dates to monthrange
         for index, row in df.iterrows():
             # check if row and month exist in delta time, if it doesn't add it.
