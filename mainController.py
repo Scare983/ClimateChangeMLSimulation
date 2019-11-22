@@ -10,6 +10,7 @@ import glob
 
 sf6_data = pd.read_csv('./data/Sf6/sf6_mm_gl.csv', header=0)
 sf6_obj = DateMod(sf6_data, 'average')
+
 n2o_data = pd.read_csv('./data/N2o/n2o_mm_gl.csv',header=0)
 n2o_obj = DateMod(n2o_data, 'average')
 

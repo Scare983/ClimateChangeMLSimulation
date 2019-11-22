@@ -3,7 +3,7 @@ import glob
 from calendar import monthrange
 import datetime as dt
 import numpy as np
-
+from matplotlib import pyplot as plt
 class DateMod():
     monthDataFrame = None
     weekDataFrame = None
@@ -66,15 +66,19 @@ class DateMod():
         self.monthDataFrame = pd.DataFrame(df[colValName].resample('M').sum(), columns=[colValName])
         self.weekDataFrame = pd.DataFrame(df[colValName].resample('W').sum(), columns=[colValName])
 
+    def graphMonths(self, name):
+        plt.plot(self.monthDataFrame)
+        plt.savefig('{}_month_graph'.format(name))
+        plt.figure().clear()
+    def graphWeeks(self,name):
+        plt.plot(self.weekDataFrame)
+        plt.savefig('{}_weeks_graph'.format(name))
+        plt.figure().clear()
+    def graphDays(self,name):
+        plt.plot(self.dayDataFrame)
+        plt.savefig('{}_days_graph'.format(name))
+        plt.figure().clear()
 
-#graph single dataframesUse.  Use this to determine how to create a function for past values
-def graph_weeklyData(self, dataFrame):
-    pass
-
-#graph all of the dataframes.  Use this to determine how to create a function for past values
-#give it several
-def graph_all(self, combinedDataFrame):
-    pass
 
 
 # if called from main, we want to test this file, so create dataframes and pass em in.
@@ -110,6 +114,9 @@ def test_code(debug):
 
 def usage():
     print('python DataModifier [-d]')
+
+
+
 
 ##MAIN METHOD##
 if __name__ == '__main__':
