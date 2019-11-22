@@ -81,42 +81,9 @@ class DateMod():
         plt.plot(self.dayDataFrame)
         plt.savefig('{}_days_graph'.format(name))
         plt.figure().clear()
-        def regrade_lin(x, y):#returns the missing values of y
-        missing = []
-        n = 0
-        sumx = 0
-        sumy = 0
-        sum_prodxy = 0
-        sum_squarex = 0
-		sum_squarey = 0
-		for i,v in enumerate(y):
-			if pd.isna(v) or pd.isna(x[i]):
-				missing.append(i)
-			if not pd.isna(v) and not pd.isna(x[i]):
-				n+=1
-				sumx += x[i]
-				sumy += v
-				sum_prodxy += x[i]*v
-				sum_squarex += x[i]**2
-				sum_squarey += v**2
-		#some method from the internet
-		#a = (sumy*sum_squarex - sumx*sum_prodxy)/(n*sum_squarex - sumx**2)
-		#b = (n*sum_prodxy - sumx*sumy)/(n*sum_squarex - sumx**2)
-		#method of least squares
-		b = (sum_prodxy-(sumx*sumy)/n)/(sum_squarex-(sumx**2)/n)#b1
-		a = (1/n)*(sumy - b*sumx)#b0
-		#y = a + bx
-		#x = (y - a)/b
-		for i in missing:
-			if pd.isna(x[i]):
-				x[i] = (y[i] - a)/b
-			else:
-				y[i] = a + b*x[i]
-		return [x,y]
-def regrade_lin(x, y):
+
+def regrade_lin(x, y):#returns the missing values of y
     missing = []
-    plt.plot(x,y)
-    plt.show()
     n = 0
     sumx = 0
     sumy = 0
@@ -139,15 +106,15 @@ def regrade_lin(x, y):
     #method of least squares
     b = (sum_prodxy-(sumx*sumy)/n)/(sum_squarex-(sumx**2)/n)#b1
     a = (1/n)*(sumy - b*sumx)#b0
-    print(a,b)
     #y = a + bx
     #x = (y - a)/b
-    #print("missing",missing)
     for i in missing:
         if pd.isna(x[i]):
             x[i] = (y[i] - a)/b
         else:
             y[i] = a + b*x[i]
+    return [x,y]
+
 
 # if called from main, we want to test this file, so create dataframes and pass em in.
 # TODO: might want to put graph_all, and graph_weekly into new class, along with our training models.

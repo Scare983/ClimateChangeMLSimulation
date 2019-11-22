@@ -11,10 +11,12 @@ import glob
 sf6_data = pd.read_csv('./data/Sf6/sf6_mm_gl.csv', header=0)
 sf6_obj = DateMod(sf6_data, 'average')
 
+sf6_obj.monthDataFrame.to_csv('sf6_month_data')
+
 n2o_data = pd.read_csv('./data/N2o/n2o_mm_gl.csv',header=0)
 n2o_obj = DateMod(n2o_data, 'average')
 
-
+n2o_obj.monthDataFrame.to_csv('N20_month_data')
 listOfCh4 = []
 i = 0
 for file in glob.glob('./data/Ch4/*'):
@@ -31,7 +33,7 @@ for ch4DataFrame in listOfCh4:
 
 # aggregate each column to get sum of all of the files we scraped.
 joinedCH4 = joinedCH4.agg('sum',axis=1)
-
+joinedCH4.to_csv('CH4_month_data')
 
 # Don't know how to do these conversion.  Need help.
 #ignoring the per capita data, we will use the yearly carbon emmision data and divide it into days then weeks and months
@@ -42,7 +44,7 @@ co2_data = co2_data.drop(co2_data.index[0]).reset_index(drop=True)
 co2_obj = DateMod(co2_data,'CarbonEmissions')
 print(co2_obj.yearDataFrame)
 #print(joinedCH4)
-
+# initialize weather data into objs.
 mainControl = WorldController()
 mainControl.train_long_lat_model(None,None,None,None)
 
