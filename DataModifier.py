@@ -5,6 +5,7 @@ import datetime as dt
 import numpy as np
 from matplotlib import pyplot as plt
 class DateMod():
+	yearDataFrame = None
     monthDataFrame = None
     weekDataFrame = None
     dayDataFrame = None
@@ -32,6 +33,7 @@ class DateMod():
         df = pd.DataFrame(dateVals, index=dateObjs, columns=[colValName])
         df.index = pd.to_datetime(df.index)
         self.dayDataFrame = df
+		self.yearDataFrame = pd.DataFrame(df[colValName].resample('Y').sum(), columns=[colValName])
         self.monthDataFrame = pd.DataFrame(df[colValName].resample('M').sum(), columns=[colValName])
         self.weekDataFrame = pd.DataFrame(df[colValName].resample('W').sum(), columns=[colValName])
     def month_to_days(self, df, colValName):
@@ -63,6 +65,7 @@ class DateMod():
         # TODO HERE:  add dates after the end date of the given df to equal 2019.... maybe..
         df = pd.DataFrame(dateVals, index=dateObjs, columns=[colValName])
         self.dayDataFrame = df
+		self.yearDataFrame = pd.DataFrame(df[colValName].resample('Y').sum(), columns=[colValName])
         self.monthDataFrame = pd.DataFrame(df[colValName].resample('M').sum(), columns=[colValName])
         self.weekDataFrame = pd.DataFrame(df[colValName].resample('W').sum(), columns=[colValName])
 

@@ -40,7 +40,7 @@ co2_data = co2_data.rename(columns={'Year':'year','Total carbon emissions from f
 co2_data = co2_data.loc[:,['year','CarbonEmissions']]
 co2_data = co2_data.drop(co2_data.index[0]).reset_index(drop=True)
 co2_obj = DateMod(co2_data,'CarbonEmissions')
-print(co2_obj.monthDataFrame)
+print(co2_obj.yearDataFrame)
 #print(joinedCH4)
 
 mainControl = WorldController()
