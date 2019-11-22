@@ -2,8 +2,7 @@
   "ExpandedNodes": [
     "",
     "\\data",
-    "\\data\\CO2Emission",
-    "\\data\\weather"
+    "\\data\\CO2Emission"
   ],
   "SelectedNode": "\\DataModifier.py",
   "PreviewInSolutionExplorer": false

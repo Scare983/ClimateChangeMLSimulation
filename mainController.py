@@ -41,9 +41,10 @@ co2_data = pd.read_csv('./data/CO2Emission/global.1751_2014.csv', header=0)
 co2_data = co2_data.rename(columns={'Year':'year','Total carbon emissions from fossil fuel consumption and cement production (million metric tons of C)':'CarbonEmissions'})
 co2_data = co2_data.loc[:,['year','CarbonEmissions']]
 co2_data = co2_data.drop(co2_data.index[0]).reset_index(drop=True)
+co2_data = co2_data.apply(pd.to_numeric)
 co2_obj = DateMod(co2_data,'CarbonEmissions')
+#print(joinedCH4)s
 print(co2_obj.yearDataFrame)
-#print(joinedCH4)
 # initialize weather data into objs.
 mainControl = WorldController()
 mainControl.train_long_lat_model(None,None,None,None)
