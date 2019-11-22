@@ -29,10 +29,11 @@ class DateMod():
                 dateObjs.append(date)
                 dateVals.append(value/days)
                 date += dt.timedelta(days=1)
-                df = pd.DataFrame(dateVals, index=dateObjs, columns=[colValName])
+        df = pd.DataFrame(dateVals, index=dateObjs, columns=[colValName])
+        df.index = pd.to_datetime(df.index)
         self.dayDataFrame = df
-       # self.monthDataFrame = pd.DataFrame(df[colValName].resample('M').sum(), columns=[colValName])
-       # self.weekDataFrame = pd.DataFrame(df[colValName].resample('W').sum(), columns=[colValName])
+        self.monthDataFrame = pd.DataFrame(df[colValName].resample('M').sum(), columns=[colValName])
+        self.weekDataFrame = pd.DataFrame(df[colValName].resample('W').sum(), columns=[colValName])
     def month_to_days(self, df, colValName):
         dateObjs = []
         dateVals = []
