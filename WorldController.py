@@ -93,7 +93,7 @@ class WorldController:
             for name, group in weatherCityData.groupby(by=[weatherCityData.index.month]):
 
                 monthDict[group.index[0].month] = group
-            print (monthDict)
+            #print (monthDict)
             averageMonthDict = {1: None, 2: None, 3: None, 4: None, 5: None, 6: None, 7: None, 8: None, 9: None, 10: None, 11: None, 12:None}
             for dataFrame in monthDict.keys():
                 averageMonthDict[dataFrame] = monthDict[dataFrame].groupby(by=monthDict[dataFrame].index).agg('mean')['AverageTemperature']
@@ -118,7 +118,7 @@ class WorldController:
         pyplot.xlabel('Years')
         pyplot.ylabel('Temperature in Celsius')
         pyplot.legend()
-        pyplot.savefig('monthDataWithlegend')
+        pyplot.savefig('./generatedData/monthDataWithlegend')
 
         pyplot.figure().clear()
 

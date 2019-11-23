@@ -85,15 +85,15 @@ class DateMod():
 
     def graphMonths(self, name):
         plt.plot(self.monthDataFrame)
-        plt.savefig('{}_month_graph'.format(name))
+        plt.savefig('/generatedData/{}_month_graph'.format(name))
         plt.figure().clear()
     def graphWeeks(self,name):
         plt.plot(self.weekDataFrame)
-        plt.savefig('{}_weeks_graph'.format(name))
+        plt.savefig('/generatedData/{}_weeks_graph'.format(name))
         plt.figure().clear()
     def graphDays(self,name):
         plt.plot(self.dayDataFrame)
-        plt.savefig('{}_days_graph'.format(name))
+        plt.savefig('/generatedData/{}_days_graph'.format(name))
         plt.figure().clear()
 
 def regrade_lin(x, y):#returns the missing values of y
@@ -136,7 +136,7 @@ def IPA(df):#value Increase in Percentage Averaged over intervals
         if i != 0:
             ratios.append(((new-old)/old)*100)
         old = new
-    print(len(ratios))
+    #(len(ratios))
     avg = sum(ratios)/len(ratios)
     return [ratios,interval]
 # if called from main, we want to test this file, so create dataframes and pass em in.
