@@ -65,6 +65,19 @@ class DateMod():
 
         # TODO HERE:  add dates after the end date of the given df to equal 2019.... maybe..
         df = pd.DataFrame(dateVals, index=dateObjs, columns=[colValName])
+        Y = regrade_lin([x for x in range(len(df[colValName].values.tolist()))],df[colValName].values.tolist())
+        for val in Y:
+            if val > 0:
+                try:
+                    foo = 1/val
+                except ZeroDivisionError:
+                    continue
+                set = val
+                break
+        for i, v in enumerate(Y):
+            if v < 0.0000001 or v == 0:
+                Y[i] = set
+        df[colValName] = Y
         self.dayDataFrame = df
         self.yearDataFrame = pd.DataFrame(df[colValName].resample('Y').sum(), columns=[colValName])
         self.monthDataFrame = pd.DataFrame(df[colValName].resample('M').sum(), columns=[colValName])
@@ -114,16 +127,18 @@ def regrade_lin(x, y):#returns the missing values of y
             x[i] = (y[i] - a)/b
         else:
             y[i] = a + b*x[i]
-    return [x,y]
+    return y
 
 def IPA(df):#value Increase in Percentage Averaged over intervals
     ratios = []
+    interval = [] 
     for i,new in enumerate(df):
         if i != 0:
             ratios.append(((new-old)/old)*100)
         old = new
+    print(len(ratios))
     avg = sum(ratios)/len(ratios)
-    return avg
+    return [ratios,interval]
 # if called from main, we want to test this file, so create dataframes and pass em in.
 # TODO: might want to put graph_all, and graph_weekly into new class, along with our training models.
 def test_code(debug):
