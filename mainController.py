@@ -46,7 +46,13 @@ co2_obj.monthDataFrame.to_csv('CO2_month_data')
 #print(joinedCH4)
 # initialize weather data into objs.
 mainControl = WorldController()
-mainControl.train_long_lat_model(None,None,None,None)
+allWeatherLongLat = pd.DataFrame()
+
+    #nitDf = pd.DataFrame()
+    #allWeatherLongLat =  pd.concat(allWeatherLongLat, initDf)
+    #print(allWeatherLongLat)
+
+#mainControl.train_long_lat_model(None,None,None,None)
 
 
 

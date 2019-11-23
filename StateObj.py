@@ -1,6 +1,7 @@
 #from CountryObj import CountryObjModel
 from CityObj import CityObjModel
 import pandas as pd
+import numpy as np
 class StateObj():
     # example:  GA: {cities : [], stateTemp:{date: temperature}}
     def __init__(self,stateName, dataFrame=None):
@@ -17,7 +18,7 @@ class StateObj():
     #pass in a week of data by days.
     def createStateDataWithData(self, allStateData):
         #add it to dict, and create timstamp data.
-        self.stateDict[self.getStateName()]['time'] = allStateData.resample('W').mean()['AverageTemperature'].to_dict()
+        self.stateDict[self.getStateName()]['time'] = allStateData.resample('M').mean()['AverageTemperature'].to_dict()
 
     # do nothing.
     def createStateDataWithoutData(self, stateName):
@@ -35,6 +36,9 @@ class StateObj():
             return key
 
     def getStateTempData(self):
+
+
+
         return self.stateDict[self.getStateName()]['time']
 
     def getCitieNames(self):
@@ -48,12 +52,40 @@ class StateObj():
     def getCitiesObj(self):
         return self.stateDict[self.getStateName()]['CityObj']
 
+    #return formatted dataframe,
+    def getCityTempData(self):
+        monthsDf = pd.DataFrame()
+        monthDict = {'01': [], '02': [], '03': [], '04': [], '05': [], '06': [], '07': [], '08': [], '09': [], '10': [], '11': [], '12':[], 'Longitude': [], 'Latitude': []}
 
+        for city in self.getCitiesObj():
+            long, lat = city.getLongLat()
+            citySize = {'01':0}
+            for keys in city.timeTempDict:
 
+                for aKey in keys:
+
+                    month = aKey.split('-')[1]
+
+                    if keys[aKey]:
+                        if month == '01':
+                            citySize[month]+=1
+                        monthDict[month].append(keys[aKey])
+                    else:
+                        monthDict[month].append(np.nan)
+
+            for i in range(citySize['01']):
+                monthDict['Longitude'].append(long)
+                monthDict['Latitude'].append(lat)
+            #print(len(monthDict['Longitude']))
+            #print(len(monthDict['01']))
+            #print(len(monthDict['03']))
+            #print(len(monthDict['Longitude']))
+            #monthsDf = pd.concat(monthsDf, newDf)
+        return monthDict
     def getCitiesLongLat(self):
         cityLongLat = []
         for city in self.getCitieNames():
-            cityLongLat.append([city.getLongLat()])
+            print(cityLongLat)
         return cityLongLat
 
 
