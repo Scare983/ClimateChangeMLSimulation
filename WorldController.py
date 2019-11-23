@@ -2,6 +2,7 @@ from datetime import datetime
 import pandas as pd
 import glob
 from StateObj import StateObj, findState
+import matplotlib.pyplot as plt
 #change this class to contioulsy run in future.
 
 ##MAIN##
