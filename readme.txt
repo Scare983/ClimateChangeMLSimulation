@@ -1,2 +1,2 @@
 Requirements:
-pip install geopy
+pip install geopypip install geohash
