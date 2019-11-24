@@ -21,7 +21,7 @@ sf6_dict = convertDFIntoMonthDict(sf6_obj.monthDataFrame[sf6_obj.monthDataFrame.
 sf6_obj.monthDataFrame.to_csv('sf6_month_data')
 
 n2o_data = pd.read_csv('./data/N2o/n2o_mm_gl.csv',header=0)
-n2o_obj = DateMod(n2o_data, 'average', 'n20')
+n2o_obj = DateMod(n2o_data, 'average', 'n2o')
 n2o_obj.monthDataFrame.to_csv('N20_month_data')
 n2o_dict = convertDFIntoMonthDict(n2o_obj.monthDataFrame[n2o_obj.monthDataFrame.index.year <2012])
 
@@ -29,7 +29,7 @@ listOfCh4 = []
 i = 0
 for file in glob.glob('./data/Ch4/*'):
     ch4_data = pd.read_csv(file, header=0)
-    listOfCh4.append(DateMod(ch4_data, 'value'))
+    listOfCh4.append(DateMod(ch4_data, 'value','ch4'))
 
     if i==10:
         break
@@ -50,8 +50,8 @@ for date in joinedCH4.month:
     CH4_month.append(date.month)
 joinedCH4.month = CH4_month
 joinedCH4['year'] = CH4_year
-CH4_obj = DateMod(joinedCH4, 'sum', 'CH4')
-plt.plot(CH4_obj.monthDataFrame)
+CH4_obj = DateMod(joinedCH4, 'sum','CH4')
+
 ch4_dict = convertDFIntoMonthDict(CH4_obj.monthDataFrame[CH4_obj.monthDataFrame.index.year <2012])
 #print(CH4_obj.dayDataFrame)
 joinedCH4.to_csv('CH4_month_data')
@@ -63,7 +63,8 @@ co2_data = co2_data.rename(columns={'Year':'year','Total carbon emissions from f
 co2_data = co2_data.loc[:,['year','CarbonEmissions']]
 co2_data = co2_data.drop(co2_data.index[0]).reset_index(drop=True)
 co2_data = co2_data.apply(pd.to_numeric)
-co2_obj = DateMod(co2_data,'CarbonEmissions', 'CO2')
+co2_obj = DateMod(co2_data,'CarbonEmissions', 'co2')
+#print(joinedCH4)
 co2_dict = convertDFIntoMonthDict(co2_obj.monthDataFrame[co2_obj.monthDataFrame.index.year <2012])
 
 
@@ -75,8 +76,9 @@ for obj in greenhouse:
             interval.append(old + '-' + month.strftime('%m/%Y') )
             #interval.append(i)
         old = month.strftime('%m/%Y')
-   # plt.plot(interval, IPA(obj.yearDataFrame[obj.yearDataFrame.keys().tolist()[0]]))
-   # plt.show()
+    plt.plot(interval, IPA(obj.yearDataFrame[obj.yearDataFrame.keys().tolist()[0]]))
+    plt.show()
+    #print(IPA(obj.monthDataFrame[obj.monthDataFrame.keys().tolist()[0]]))
 # initialize weather data into objs.
 mainControl = WorldController()
 

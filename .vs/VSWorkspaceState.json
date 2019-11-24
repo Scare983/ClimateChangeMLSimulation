@@ -2,9 +2,8 @@
   "ExpandedNodes": [
     "",
     "\\data",
-    "\\data\\CO2Emission",
-    "\\data\\weather"
+    "\\data\\CO2Emission"
   ],
-  "SelectedNode": "\\WorldController.py",
+  "SelectedNode": "\\mainController.py",
   "PreviewInSolutionExplorer": false
 }
