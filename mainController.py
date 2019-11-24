@@ -25,36 +25,17 @@ n2o_obj = DateMod(n2o_data, 'average', 'n2o')
 n2o_obj.monthDataFrame.to_csv('N20_month_data')
 n2o_dict = convertDFIntoMonthDict(n2o_obj.monthDataFrame[n2o_obj.monthDataFrame.index.year <2012])
 
-listOfCh4 = []
-i = 0
-for file in glob.glob('./data/Ch4/*'):
-    ch4_data = pd.read_csv(file, header=0)
-    listOfCh4.append(DateMod(ch4_data, 'value','ch4'))
-
-    if i==10:
-        break
-    i+=1
-joinedCH4 = pd.DataFrame()
-# concat all dataframes we made, and create sum
-for ch4DataFrame in listOfCh4:
-    joinedCH4 = pd.concat([joinedCH4, ch4DataFrame.monthDataFrame], axis=1)
-
-
-# aggregate each column to get sum of all of the files we scraped.
-joinedCH4 = joinedCH4.agg('sum',axis=1)
-joinedCH4 = joinedCH4.to_frame().reset_index().rename(columns={'index':'month',0:'sum'})
-CH4_year = []
-CH4_month = []
-for date in joinedCH4.month:
-    CH4_year.append(date.year)
-    CH4_month.append(date.month)
-joinedCH4.month = CH4_month
-joinedCH4['year'] = CH4_year
-CH4_obj = DateMod(joinedCH4, 'sum','CH4')
-
+ch4_txt = open('./data/Ch4/ch4_mm_gl.txt',mode='r')
+keys = ch4_txt.readline().split()
+for key in keys:
+    ch4_data[key] = []
+for line in ch4_txt:
+    for i, v in enumerate(line.split()):
+        ch4_data[keys[i]].append(v)
+ch4_data = pd.DataFrame(ch4_data)
+ch4_data = ch4_data.apply(pd.to_numeric)
+ch4_obj = DateMod(ch4_data, 'average', 'ch4')
 ch4_dict = convertDFIntoMonthDict(CH4_obj.monthDataFrame[CH4_obj.monthDataFrame.index.year <2012])
-#print(CH4_obj.dayDataFrame)
-joinedCH4.to_csv('CH4_month_data')
 
 # Don't know how to do these conversion.  Need help.
 #ignoring the per capita data, we will use the yearly carbon emmision data and divide it into days then weeks and months
