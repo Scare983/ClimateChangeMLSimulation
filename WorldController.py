@@ -1,8 +1,10 @@
 from datetime import datetime
 import pandas as pd
 import glob
+import numpy as np
 from StateObj import StateObj, findState
 from matplotlib import pyplot
+from DataModifier import DateMod
 #change this class to contioulsy run in future.
 
 ##MAIN##
@@ -35,7 +37,7 @@ class WorldController:
                 weatherCityData = weatherCityData[weatherCityData['Country'] == 'United States']
                 weatherCityData.index = pd.to_datetime(weatherCityData.index)
                 weatherCityData = weatherCityData[weatherCityData.index.year >= 1960]
-                weatherCityData = weatherCityData[weatherCityData.index.year < 2013]
+                weatherCityData = weatherCityData[weatherCityData.index.year < 2012]
                 allWeatherCityData = allWeatherCityData.append(weatherCityData)
                 for key in cityCountryDict.keys():
                     #pd.DataFrame(weatherCityData['AverageTemperature'].resample('W').sum(), columns=['AverageTemperature'])
@@ -56,7 +58,7 @@ class WorldController:
 
             #get weather data from 1960 and above.
             allStateData = allStateData[allStateData.index.year>=1960]#.resample('W').mean()['AverageTemperature']
-            allStateData = allStateData[allStateData.index.year<2013]
+            allStateData = allStateData[allStateData.index.year<2012]
             allStates = []
             for state in allStateData['State'].unique():
                 otherData = allStateData[allStateData['State'] == state]
@@ -89,14 +91,17 @@ class WorldController:
             weatherCityData.index = pd.to_datetime(weatherCityData.index)
             weatherCityData = weatherCityData[weatherCityData.index.year >= 1960]
             weatherCityData = weatherCityData[weatherCityData.index.year <= 2012]
-            monthDict = {1: None, 2: None, 3: None, 4: None, 5: None, 6: None, 7: None, 8: None, 9: None, 10: None, 11: None, 12:None}
+            for index,row in weatherCityData.iterrows():
+                weatherCityData['Longitude'].loc[index] = parseLong(row['Longitude'])
+                weatherCityData['Latitude'].loc[index] = parseLat(row['Latitude'])
+            self.monthDict = {1: None, 2: None, 3: None, 4: None, 5: None, 6: None, 7: None, 8: None, 9: None, 10: None, 11: None, 12:None}
             for name, group in weatherCityData.groupby(by=[weatherCityData.index.month]):
 
-                monthDict[group.index[0].month] = group
+                self.monthDict[group.index[0].month] = group
             #print (monthDict)
             averageMonthDict = {1: None, 2: None, 3: None, 4: None, 5: None, 6: None, 7: None, 8: None, 9: None, 10: None, 11: None, 12:None}
-            for dataFrame in monthDict.keys():
-                averageMonthDict[dataFrame] = monthDict[dataFrame].groupby(by=monthDict[dataFrame].index).agg('mean')['AverageTemperature']
+            for dataFrame in self.monthDict.keys():
+                averageMonthDict[dataFrame] = self.monthDict[dataFrame].groupby(by=self.monthDict[dataFrame].index).agg('mean')['AverageTemperature']
             #monthDict[1].to_csv('month1 temperatures')
             self.graphMonthlyChange(averageMonthDict)
             self.calculatePerIncrease(averageMonthDict)
@@ -122,16 +127,41 @@ class WorldController:
 
         pyplot.figure().clear()
 
-    def train_long_lat_model(self,sf6, n2o, co2, ch4):
-        longLatDF = pd.DataFrame()
-        i = 1
-        for state in self.states:
+    def getDfToTrain(self,sf6, n2o, co2, ch4):
+        sf6 = self.createMonthYear(sf6)
+        n2o = self.createMonthYear(n2o)
+        co2 = self.createMonthYear(co2)
+        ch4 = self.createMonthYear(ch4)
+        dfMonthArray = []
+        for keys in self.monthDict:
+            month1 = pd.DataFrame(self.monthDict[keys][['AverageTemperature', 'Latitude', 'Longitude']])
+            month1['sf6'] = np.nan
+            month1['n2o'] = np.nan
+            month1['co2'] = np.nan
+            month1['ch4'] = np.nan
+            monthParsed = month1.reset_index()
+            i =0
+            for index, row in monthParsed.iterrows():
+                #print(sf6.loc[index.date()].values[0])
+                ymRow = "{}/{}".format(row['dt'].year, row['dt'].month)
+                month1['sf6'].iloc[i] = sf6[sf6['index'] == ymRow]['average'].values[0]
+                month1['n2o'].iloc[i] = n2o[n2o['index'] == ymRow]['average'].values[0]
+                month1['co2'].iloc[i] = co2[co2['index'] == ymRow]['CarbonEmissions'].values[0]
+                month1['ch4'].iloc[i] = ch4[ch4['index'] == ymRow]['sum'].values[0]
+                i+=1
+            month1.reset_index(drop=True, inplace=True)
+            dfMonthArray.append(month1)
+        return dfMonthArray
 
-            for city in state.getCitiesObj():
-                print(f'{i}  {state.getStateName()}  {city.getCityName()} {city.getLongLat()}')
 
+    def createMonthYear(self, df):
+        sf6YearMonth = []
+        for i in range(0, len(df.index.year)):
+            sf6YearMonth.append('{}/{}'.format(df.index[i].year, df.index[i].month ))
+        df = df.reset_index()
+        df['index'] = pd.Series(sf6YearMonth)
+        return df
 
-            i+=1
     def train_state_models(self):
         stateModel = "" # should be linear/log model
         for state in self.states:
@@ -141,6 +171,17 @@ class WorldController:
 
     def train_city_models(self):
         pass
+def parseLong( longitude): #east negative
+    if 'E' in longitude:
+        return   float(longitude.replace('E', ''))
+    else:
+        return (-1) * float(longitude.replace('W', ''))
+
+def parseLat( latitude): #north south
+    if 'S' in latitude:
+        return  (-1) *float(latitude.replace('S', ''))
+    else:
+        return float(latitude.replace('N', ''))
 ## Right here, create ML model.
 
 
