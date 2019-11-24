@@ -1,4 +1,5 @@
 from WorldController import WorldController
+from matplotlib import pyplot as plt
 from DataModifier import DateMod, IPA
 import pandas as pd
 import glob
@@ -69,8 +70,15 @@ co2_dict = convertDFIntoMonthDict(co2_obj.monthDataFrame[co2_obj.monthDataFrame.
 
 greenhouse = [sf6_obj,n2o_obj,CH4_obj, co2_obj]
 for obj in greenhouse:
+    interval = []
+    for i, month in enumerate(obj.yearDataFrame.index):
+        if i != 0:
+            interval.append(old + '-' + month.strftime('%m/%Y') )
+            #interval.append(i)
+        old = month.strftime('%m/%Y')
+    plt.plot(interval, IPA(obj.yearDataFrame[obj.yearDataFrame.keys().tolist()[0]]))
+    plt.show()
     #print(IPA(obj.monthDataFrame[obj.monthDataFrame.keys().tolist()[0]]))
-    pass
 # initialize weather data into objs.
 mainControl = WorldController()
 

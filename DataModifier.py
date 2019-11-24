@@ -3,7 +3,6 @@ import glob
 from calendar import monthrange
 import datetime as dt
 import numpy as np
-from matplotlib import pyplot as plt
 class DateMod():
     yearDataFrame = None
     monthDataFrame = None
@@ -131,14 +130,13 @@ def regrade_lin(x, y):#returns the missing values of y
 
 def IPA(df):#value Increase in Percentage Averaged over intervals
     ratios = []
-    interval = [] 
     for i,new in enumerate(df):
         if i != 0:
             ratios.append(((new-old)/old)*100)
         old = new
     #(len(ratios))
     avg = sum(ratios)/len(ratios)
-    return [ratios,interval]
+    return ratios
 # if called from main, we want to test this file, so create dataframes and pass em in.
 # TODO: might want to put graph_all, and graph_weekly into new class, along with our training models.
 def test_code(debug):
