@@ -23,6 +23,7 @@ joinedCH4 = pd.DataFrame()
 for ch4DataFrame in listOfCh4:
     joinedCH4 = pd.concat([joinedCH4, ch4DataFrame.monthDataFrame], axis=1)
     joinedCH4 = joinedCH4.agg('sum',axis=1)
+print(joinedCH4.head(15))
 joinedCH4 = joinedCH4.to_frame().reset_index().rename(columns={'index':'month',0:'sum'})
 CH4_year = []
 CH4_month = []
@@ -40,7 +41,7 @@ co2_data = co2_data.apply(pd.to_numeric)
 co2_obj = DateMod(co2_data,'CarbonEmissions', "CO2")
 
 greenhouse = [sf6_obj,n2o_obj,CH4_obj, co2_obj]
-for obj in greenhouse:
+'''for obj in greenhouse:
     plt.plot(list(obj.dayDataFrame.index), obj.dayDataFrame.values.tolist())
     plt.title(obj.dataName + " " +  obj.colVal + " over time")
-    plt.show()
+    plt.show()'''
