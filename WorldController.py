@@ -91,13 +91,15 @@ class WorldController:
             weatherCityData.index = pd.to_datetime(weatherCityData.index)
             weatherCityData = weatherCityData[weatherCityData.index.year >= 1960]
             weatherCityData = weatherCityData[weatherCityData.index.year <= 2012]
-            for index,row in weatherCityData.iterrows():
-                weatherCityData['Longitude'].loc[index] = parseLong(row['Longitude'])
-                weatherCityData['Latitude'].loc[index] = parseLat(row['Latitude'])
+            i = 0
+            weatherCityData.Latitude = weatherCityData.Latitude.apply(parseLat)
+            weatherCityData.Longitude = weatherCityData.Longitude.apply(parseLong)
+
             self.monthDict = {1: None, 2: None, 3: None, 4: None, 5: None, 6: None, 7: None, 8: None, 9: None, 10: None, 11: None, 12:None}
             for name, group in weatherCityData.groupby(by=[weatherCityData.index.month]):
 
                 self.monthDict[group.index[0].month] = group
+
             #print (monthDict)
             averageMonthDict = {1: None, 2: None, 3: None, 4: None, 5: None, 6: None, 7: None, 8: None, 9: None, 10: None, 11: None, 12:None}
             for dataFrame in self.monthDict.keys():
@@ -109,7 +111,8 @@ class WorldController:
 
 
 
-
+    def getMonthDict(self):
+        return self.monthDict
 
     def calculatePerIncrease(self, aDict):
         for key in aDict.keys():
