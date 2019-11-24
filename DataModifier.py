@@ -3,12 +3,17 @@ import glob
 from calendar import monthrange
 import datetime as dt
 import numpy as np
+from matplotlib import pyplot as plt
 class DateMod():
     yearDataFrame = None
     monthDataFrame = None
     weekDataFrame = None
     dayDataFrame = None
-    def __init__(self, df, colValName):
+    dataName = None
+    colVa1 = None
+    def __init__(self, df, colValName, name):
+        self.dataName = name
+        self.colVal = colValName
         if "month" in df.keys():
             self.month_to_days(df,colValName)
         elif 'year' in df.keys():
@@ -84,7 +89,7 @@ class DateMod():
 
     def graphMonths(self, name):
         plt.plot(self.monthDataFrame)
-        plt.savefig('/generatedData/{}_month_graph'.format(name))
+        #plt.savefig('/generatedData/{}_month_graph'.format(name))
         plt.figure().clear()
     def graphWeeks(self,name):
         plt.plot(self.weekDataFrame)
