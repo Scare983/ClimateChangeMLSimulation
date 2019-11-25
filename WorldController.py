@@ -150,7 +150,7 @@ class WorldController:
                 month1['sf6'].iloc[i] = sf6[sf6['index'] == ymRow]['average'].values[0]
                 month1['n2o'].iloc[i] = n2o[n2o['index'] == ymRow]['average'].values[0]
                 month1['co2'].iloc[i] = co2[co2['index'] == ymRow]['CarbonEmissions'].values[0]
-                month1['ch4'].iloc[i] = ch4[ch4['index'] == ymRow]['sum'].values[0]
+                month1['ch4'].iloc[i] = ch4[ch4['index'] == ymRow]['average'].values[0]
                 i+=1
             month1.reset_index(drop=True, inplace=True)
             dfMonthArray.append(month1)
