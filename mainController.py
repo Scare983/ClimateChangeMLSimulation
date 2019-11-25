@@ -34,7 +34,7 @@ for line in ch4_txt:
         ch4_data[keys[i]].append(v)
 ch4_data = pd.DataFrame(ch4_data)
 ch4_data = ch4_data.apply(pd.to_numeric)
-ch4_obj = DateMod(ch4_data, 'average', 'ch4')
+CH4_obj = DateMod(ch4_data, 'average', 'ch4')
 ch4_dict = convertDFIntoMonthDict(CH4_obj.monthDataFrame[CH4_obj.monthDataFrame.index.year <2012])
 
 # Don't know how to do these conversion.  Need help.

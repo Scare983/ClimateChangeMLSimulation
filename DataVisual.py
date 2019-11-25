@@ -20,7 +20,7 @@ for line in ch4_txt:
         ch4_data[keys[i]].append(v)
 ch4_data = pd.DataFrame(ch4_data)
 ch4_data = ch4_data.apply(pd.to_numeric)
-ch4_obj = DateMod(ch4_data, 'average', 'ch4')
+CH4_obj = DateMod(ch4_data, 'average', 'CH4')
 co2_data = pd.read_csv('./data/CO2Emission/global.1751_2014.csv', header=0)
 co2_data = co2_data.rename(columns={'Year':'year','Total carbon emissions from fossil fuel consumption and cement production (million metric tons of C)':'CarbonEmissions'})
 co2_data = co2_data.loc[:,['year','CarbonEmissions']]
@@ -28,7 +28,7 @@ co2_data = co2_data.drop(co2_data.index[0]).reset_index(drop=True)
 co2_data = co2_data.apply(pd.to_numeric)
 co2_obj = DateMod(co2_data,'CarbonEmissions', "CO2")
 
-greenhouse = [sf6_obj,n2o_obj,ch4_obj, co2_obj]
+greenhouse = [sf6_obj,n2o_obj,CH4_obj, co2_obj]
 for obj in greenhouse:
     plt.plot(list(obj.dayDataFrame.index), obj.dayDataFrame.values.tolist())
     plt.title(obj.dataName + " " +  obj.colVal + " over time")
