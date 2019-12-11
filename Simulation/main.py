@@ -2,8 +2,10 @@
 from sklearn.externals import joblib
 import os
 import numpy as np
-import pandas as pd
-argumentHash = {'Long': None, 'Lat' : None, 'rate': None, 'timeIsMonth': True}
+from GreenHouseAgents.ghgControl import ghgControl
+import GreenHouseAgents.defaultAgent as GHContainer
+
+argumentHash = {'Long': None, 'Lat' : None, 'timeIsMonth': True}
 def usage():
     print('please print correct input values')
     exit(2)
@@ -12,17 +14,15 @@ import getopt
 import sys
 debug = False
 try:
-    opt, args = getopt.getopt(sys.argv[1:], "l:o:r:y")
 
+    opt, args = getopt.getopt(sys.argv[1:], "a:o:y")
     for opts, arg in opt:
-        if opts == '-l':#long
+        if opts == '-o':#long
             argumentHash['Long'] = float(arg)
         elif opts == '-y':
             argumentHash['timeIsMonth'] = False
-        elif opts == '-o':#lat
+        elif opts == '-a':#lat
             argumentHash['Lat'] = float(arg)
-        elif opts == '-r':#rate
-            argumentHash['rate'] = arg
     for a in argumentHash.keys():
         if argumentHash[a] is None:
             usage()
@@ -39,23 +39,18 @@ for key in monthModels.keys():
     monthModels[monthFName[i][0:3]] = joblib.load('../learnedLinModels/{}'.format(monthFName[i]))
     i+=1
 kMeansModel = joblib.load('../KMeansModel/KMeansModel.pkl')
-print(kMeansModel.predict( np.array([argumentHash['Long'], argumentHash['Lat']]).reshape(1,-1)  ))
-
 
 # this is starting greenhouse gas from 1960 in January. Instantiate default values.
 initialSf6 = 0.000005
 initialCo2 = 217.592896
 initialN2o = 276.889729
 initialCh4 = 1529.14
+# 2 dots because this is being passed in.
 ghDirName = '../greenhouseRates'
-sf6Rates = pd.read_csv('{}/sf6Rates'.format(ghDirName), infer_datetime_format=True)
-ch4Rates = pd.read_csv('{}/ch4Rates'.format(ghDirName), infer_datetime_format=True)
-co2Rates = pd.read_csv('{}/co2Rates'.format(ghDirName), infer_datetime_format=True)
-n2oRates = pd.read_csv('{}/n2oRates'.format(ghDirName), infer_datetime_format=True)
-sf6Rates.set_index('dt', inplace=True)
-ch4Rates.set_index('dt', inplace=True)
-co2Rates.set_index('dt', inplace=True)
-n2oRates.set_index('dt', inplace=True)
+sf6RatesFname ='{}/sf6Rates.csv'.format(ghDirName)
+ch4RatesFname = '{}/ch4Rates.csv'.format(ghDirName)
+co2RatesFname = '{}/co2Rates.csv'.format(ghDirName)
+n2oRatesFname = '{}/n2oRates.csv'.format(ghDirName)
 
 
 longLatHash = kMeansModel.predict( np.array([argumentHash['Long'], argumentHash['Lat']]).reshape(1,-1))
@@ -67,14 +62,20 @@ if argumentHash['timeIsMonth'] == False:
 #600 months pass is the time of simulation.
 # if time argument is months, we calculaute each month, if year we sum and average all predictions of a year.
 
-
+### initialization complete.  Run simulation.
 
 
 def greenHouseGas(env):
     cumSumGH = {'sf6': initialSf6, 'n2o': initialN2o, 'co2': initialCo2, 'ch4':initialCh4, 'longLat': longLatHash}
     janTemp, febTemp, marTemp, aprTemp, mayTemp, junTemp, julTemp, augTemp, sepTemp, octTemp, novTemp, novTemp, decTemp = {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}, {}
-
     beginYear = 1960
+
+    ghgControl.setSimTime(beginYear)
+    ch4Obj = GHContainer.ch4Control(ch4RatesFname, initialCh4)
+    co2Obj = GHContainer.co2Control(co2RatesFname, initialCo2)
+    sf6Obj = GHContainer.sf6Control(sf6RatesFname, initialSf6)
+    n2oObj = GHContainer.n2oControl(n2oRatesFname, initialN2o)
+
     while True:
 
         if argumentHash['timeIsMonth'] == False:
@@ -109,6 +110,8 @@ def greenHouseGas(env):
                 yield env.timeout(1)
                 #increment year at end.
                 beginYear +=1
+                ghgControl.setSimTime(beginYear)
+
                 pass
 
 import simpy
