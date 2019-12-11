@@ -67,19 +67,39 @@ if [ -e  $filePath ];then
     #module="$(echo $filePath | sed  "s/\//./g")" 
     fName="$(echo $filePath |  sed -r 's/([A-z]+\/)+(.*).py/\2/')"
     sed -i "s/import GreenHouseAgents.defaultAgent/import $module.$fName/" mainCp.py
+    #these values were calculated from Analysis.py which looks at all the greenhouse gases.
     initialSf6=0.000005
     initialCo2=217.592896
     initialN2o=276.889729
     initialCh4=1529.14
+    ghArary=($initialCh4  $initialCo2  $initialN2o $initialSf6)
     #TODO:  if random is added, change initial GH in main.py
     #TODO: and rates in GreenHouseAgents/ghgControl.py
     # if year not 1960, we have to calculate an initial value using default data.
     cp ../greenHouseRates/OrigGhRates/* ../greenHouseRates/
     if [ "$year" != "1960" ]; then
-      diff=$((("$year"-1960)*12 + 1 ))
-      echo "$diff"
+      diff1=$((("$year"-1960)*12 + 1 ))
+      diff=$(("diff1" -1))
+      index=0
+      for file in $(ls -p ../greenHouseRates | grep -v /); do
+        valuesToSum=$(head -"$diff1" "../greenHouseRates/$file" | tail -"$diff" |  sed "s/.*,//")
+        #remove the lines we are calculating so that calulcations done in Simulation have accurate rates to start with.
+        sed -i "2,"$(($diff+1))"d" "../greenHouseRates/$file"
+        sed -i "2 s/,.*/,0.0/" "../greenHouseRates/$file"
+        echo "Calculating new initial GH Values because different date was given..."
+        for line in $valuesToSum;do
+          value=$(echo "$line")
+          iVal=${ghArary[$index]}
+          ouput=$(python -c "print ($iVal* $value + ${ghArary[$index]})")
+          ghArary["$index"]="$ouput"
+        done
+        index=$(("$index"+1))
+      done
     fi
-    python mainCp.py -a "$lat" -o "$long"
+    simTime=$(((2014-"$year") * 12 + 12 ))
+
+    #pass in SimTime.
+    python mainCp.py -a "$lat" -o "$long" -s "$simTime"
 
 
 else 

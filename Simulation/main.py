@@ -4,25 +4,33 @@ import os
 import numpy as np
 from GreenHouseAgents.ghgControl import ghgControl
 import GreenHouseAgents.defaultAgent as GHContainer
-
-argumentHash = {'Long': None, 'Lat' : None, 'timeIsMonth': True}
-def usage():
-    print('please print correct input values')
-    exit(2)
-
 import getopt
 import sys
+argumentHash = {'Long': None, 'Lat' : None, 'simTime':None}
+def usage():
+    print('please print correct input values')
+    print('python main.py -a (latitude) -o (longitude) -s (simTime)')
+    print('Simtime cannot exceed 660 months because we are basing rates of GH on real data ')
+    print('Our limitation is that CO2 readings I currently have end at Dec. 2014, but can be extended in the future. ')
+    print("")
+    print("")
+    print("Optional parameters include:  startings values for greenhouse gases.  ")
+    exit(2)
+
+
 debug = False
 try:
 
-    opt, args = getopt.getopt(sys.argv[1:], "a:o:y")
+    opt, args = getopt.getopt(sys.argv[1:], "a:o:s:")
     for opts, arg in opt:
         if opts == '-o':#long
             argumentHash['Long'] = float(arg)
-        elif opts == '-y':
-            argumentHash['timeIsMonth'] = False
         elif opts == '-a':#lat
             argumentHash['Lat'] = float(arg)
+        elif opts == '-s':#simTime
+            if(int(arg) > 660):
+                usage()
+            argumentHash['simTime'] = int(arg)
     for a in argumentHash.keys():
         if argumentHash[a] is None:
             usage()
@@ -56,8 +64,7 @@ n2oRatesFname = '{}/n2oRates.csv'.format(ghDirName)
 longLatHash = kMeansModel.predict( np.array([argumentHash['Long'], argumentHash['Lat']]).reshape(1,-1))
 simTime = 600
 # we are calculating yearly change.
-if argumentHash['timeIsMonth'] == False:
-    simTime = 50
+
 
 #600 months pass is the time of simulation.
 # if time argument is months, we calculaute each month, if year we sum and average all predictions of a year.
@@ -77,42 +84,37 @@ def greenHouseGas(env):
     n2oObj = GHContainer.n2oControl(n2oRatesFname, initialN2o)
 
     while True:
+        timeOfMonth = env.now % 12
+        if timeOfMonth == 0:
+            yield env.timeout(1)
 
-        if argumentHash['timeIsMonth'] == False:
+        elif timeOfMonth == 1:
+            yield env.timeout(1)
+        elif timeOfMonth == 2:
+            yield env.timeout(1)
+        elif timeOfMonth == 3:
+            yield env.timeout(1)
+        elif timeOfMonth == 4:
+            yield env.timeout(1)
+        elif timeOfMonth == 5:
+            yield env.timeout(1)
+        elif timeOfMonth == 6:
+            yield env.timeout(1)
+        elif timeOfMonth == 7:
+            yield env.timeout(1)
+        elif timeOfMonth == 8:
+            yield env.timeout(1)
+        elif timeOfMonth == 9:
+            yield env.timeout(1)
+        elif timeOfMonth == 10:
+            yield env.timeout(1)
+        elif timeOfMonth == 11:
+            yield env.timeout(1)
+            #increment year at end.
+            beginYear +=1
+            ghgControl.setSimTime(beginYear)
+
             pass
-        else:
-            timeOfMonth = env.now % 12
-            if timeOfMonth == 0:
-
-                yield env.timeout(1)
-
-            elif timeOfMonth == 1:
-                yield env.timeout(1)
-            elif timeOfMonth == 2:
-                yield env.timeout(1)
-            elif timeOfMonth == 3:
-                yield env.timeout(1)
-            elif timeOfMonth == 4:
-                yield env.timeout(1)
-            elif timeOfMonth == 5:
-                yield env.timeout(1)
-            elif timeOfMonth == 6:
-                yield env.timeout(1)
-            elif timeOfMonth == 7:
-                yield env.timeout(1)
-            elif timeOfMonth == 8:
-                yield env.timeout(1)
-            elif timeOfMonth == 9:
-                yield env.timeout(1)
-            elif timeOfMonth == 10:
-                yield env.timeout(1)
-            elif timeOfMonth == 11:
-                yield env.timeout(1)
-                #increment year at end.
-                beginYear +=1
-                ghgControl.setSimTime(beginYear)
-
-                pass
 
 import simpy
 env = simpy.Environment()

@@ -4,14 +4,14 @@ import os
 import numpy as np
 from GreenHouseAgents.ghgControl import ghgControl
 import GreenHouseAgents.defaultAgent as GHContainer
-
-argumentHash = {'Long': None, 'Lat' : None, 'timeIsMonth': True}
+import getopt
+import sys
+argumentHash = {'Long': None, 'Lat' : None}
 def usage():
     print('please print correct input values')
     exit(2)
 
-import getopt
-import sys
+
 debug = False
 try:
 
@@ -19,8 +19,6 @@ try:
     for opts, arg in opt:
         if opts == '-o':#long
             argumentHash['Long'] = float(arg)
-        elif opts == '-y':
-            argumentHash['timeIsMonth'] = False
         elif opts == '-a':#lat
             argumentHash['Lat'] = float(arg)
     for a in argumentHash.keys():
@@ -56,8 +54,7 @@ n2oRatesFname = '{}/n2oRates.csv'.format(ghDirName)
 longLatHash = kMeansModel.predict( np.array([argumentHash['Long'], argumentHash['Lat']]).reshape(1,-1))
 simTime = 600
 # we are calculating yearly change.
-if argumentHash['timeIsMonth'] == False:
-    simTime = 50
+
 
 #600 months pass is the time of simulation.
 # if time argument is months, we calculaute each month, if year we sum and average all predictions of a year.
@@ -77,42 +74,38 @@ def greenHouseGas(env):
     n2oObj = GHContainer.n2oControl(n2oRatesFname, initialN2o)
 
     while True:
+        timeOfMonth = env.now % 12
+        if timeOfMonth == 0:
 
-        if argumentHash['timeIsMonth'] == False:
+            yield env.timeout(1)
+
+        elif timeOfMonth == 1:
+            yield env.timeout(1)
+        elif timeOfMonth == 2:
+            yield env.timeout(1)
+        elif timeOfMonth == 3:
+            yield env.timeout(1)
+        elif timeOfMonth == 4:
+            yield env.timeout(1)
+        elif timeOfMonth == 5:
+            yield env.timeout(1)
+        elif timeOfMonth == 6:
+            yield env.timeout(1)
+        elif timeOfMonth == 7:
+            yield env.timeout(1)
+        elif timeOfMonth == 8:
+            yield env.timeout(1)
+        elif timeOfMonth == 9:
+            yield env.timeout(1)
+        elif timeOfMonth == 10:
+            yield env.timeout(1)
+        elif timeOfMonth == 11:
+            yield env.timeout(1)
+            #increment year at end.
+            beginYear +=1
+            ghgControl.setSimTime(beginYear)
+
             pass
-        else:
-            timeOfMonth = env.now % 12
-            if timeOfMonth == 0:
-
-                yield env.timeout(1)
-
-            elif timeOfMonth == 1:
-                yield env.timeout(1)
-            elif timeOfMonth == 2:
-                yield env.timeout(1)
-            elif timeOfMonth == 3:
-                yield env.timeout(1)
-            elif timeOfMonth == 4:
-                yield env.timeout(1)
-            elif timeOfMonth == 5:
-                yield env.timeout(1)
-            elif timeOfMonth == 6:
-                yield env.timeout(1)
-            elif timeOfMonth == 7:
-                yield env.timeout(1)
-            elif timeOfMonth == 8:
-                yield env.timeout(1)
-            elif timeOfMonth == 9:
-                yield env.timeout(1)
-            elif timeOfMonth == 10:
-                yield env.timeout(1)
-            elif timeOfMonth == 11:
-                yield env.timeout(1)
-                #increment year at end.
-                beginYear +=1
-                ghgControl.setSimTime(beginYear)
-
-                pass
 
 import simpy
 env = simpy.Environment()
