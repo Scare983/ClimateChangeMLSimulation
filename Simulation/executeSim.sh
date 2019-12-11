@@ -27,7 +27,7 @@ pr=0
 long=0
 lat=0
 year=1960
-while getopts "f:o:a:gpy:" opt; do
+while getopts "f:o:a:gpy:h" opt; do
   case "$opt" in
   f) filePath=$OPTARG
     ;;
@@ -40,6 +40,8 @@ while getopts "f:o:a:gpy:" opt; do
   p) pr=1
     ;;
   y) year=$OPTARG
+    ;;
+  h) helpFunction
     ;;
   esac
 done
@@ -96,10 +98,17 @@ if [ -e  $filePath ];then
         index=$(("$index"+1))
       done
     fi
-    simTime=$(((2014-"$year") * 12 + 12 ))
 
+    # randomize intiial values.
+    if (("$ghr" == 1 )); then
+      for index1 in 0 1 2 3 ; do
+        ghArary["$index1"]=$(python randomNumberGen.py "${ghArary[$index1]}")
+      done
+
+    fi
+    simTime=$(((2014-"$year") * 12 + 12 ))
     #pass in SimTime.
-    python mainCp.py -a "$lat" -o "$long" -s "$simTime"
+    python mainCp.py -a "$lat" -o "$long" -s "$simTime" -4 ${ghArary[0]}  -0 ${ghArary[2]} -2 ${ghArary[1]}  -6 ${ghArary[3]} -y "$year"
 
 
 else 

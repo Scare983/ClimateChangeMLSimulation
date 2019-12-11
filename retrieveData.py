@@ -4,8 +4,6 @@ import urllib.request
 from os.path import exists
 from os import remove
 import re
-import numpy as np
-import pandas as pd
 from bs4 import BeautifulSoup
 import requests
 argumentHash = {'ch4':False, 'n02':True, 'weather': False, 'sf6':False, 'debug':False}
