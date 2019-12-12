@@ -8,7 +8,8 @@ import GreenHouseAgents.defaultAgent as GHContainer
 import getopt
 import sys
 import calendar as cal
-import warnings
+import matplotlib.pyplot as plt
+import simpy
 
 
 
@@ -107,18 +108,25 @@ def greenHouseGas(env):
     i=0
     while env.now <= argumentHash['simTime']:
         timeOfMonth = env.now % 12
+        print("{}-{}".format(argumentHash['beginYear'], timeOfMonth+1))
         if timeOfMonth == 0:
             if i != 0:
                 argumentHash['beginYear']=argumentHash['beginYear']+1
+                ghgControl.setSimTime(argumentHash['beginYear'], timeOfMonth+1)
+                cumSf6 = sf6Obj.calculateNextGh()
+                cumCo2 = co2Obj.calculateNextGh()
+                cumN2o = n2oObj.calculateNextGh()
+                cumCh4 = ch4Obj.calculateNextGh()
+                dtString = '{}-{}'.format(ghgControl.getSimDatetimeString().year, ghgControl.getSimDatetimeString().month)
+                janTemp[dtString] = monthModels['Jan'].predict(np.array([cumSf6, cumN2o, cumCo2, cumCh4]).reshape(1,-1))
             else:
+                cumSf6 = sf6Obj.start()
+                cumCo2 = co2Obj.start()
+                cumN2o = n2oObj.start()
+                cumCh4 = ch4Obj.start()
                 i+=1
-            ghgControl.setSimTime(argumentHash['beginYear'], timeOfMonth+1)
-            cumSf6 = sf6Obj.calculateNextGh()
-            cumCo2 = co2Obj.calculateNextGh()
-            cumN2o = n2oObj.calculateNextGh()
-            cumCh4 = ch4Obj.calculateNextGh()
-            dtString = '{}-{}'.format(ghgControl.getSimDatetimeString().year, ghgControl.getSimDatetimeString().month)
-            janTemp[dtString] = monthModels['Jan'].predict(np.array([cumSf6, cumN2o, cumCo2, cumCh4]).reshape(1,-1))
+                dtString = '{}-{}'.format(ghgControl.getSimDatetimeString().year, ghgControl.getSimDatetimeString().month)
+                janTemp[dtString] = monthModels['Jan'].predict(np.array([cumSf6, cumN2o, cumCo2, cumCh4]).reshape(1,-1))
             yield env.timeout(1)
 
         elif timeOfMonth == 1:
@@ -224,7 +232,7 @@ def greenHouseGas(env):
             #increment year at end.
 
 def graphActVsPredicted(joinedDf, monthName, showAll=False):
-    import matplotlib.pyplot as plt
+
 
 
     if argumentHash['output'] is None:
@@ -236,8 +244,7 @@ def graphActVsPredicted(joinedDf, monthName, showAll=False):
     else:
         if showAll:
             plt.plot(joinedDf['average'])
-            plt.plot(joinedDf['predTemp'], marker='o', markersize=8, linewidth=2, linestyle='dashed', label='Predicted {}'.format(monthName))
-            plt.legend()
+            plt.plot(joinedDf['predTemp'],  markersize=8, linewidth=2, linestyle='dashed', label='Predicted {}'.format(monthName))
             plt.savefig('{}/{}.png'.format(argumentHash['output'], 'ActVsPredictedAll'))
         else:
             plt.plot(joinedDf['average'], label='Actual Temp')
@@ -289,10 +296,28 @@ def calculateMSE(joinedDf, monthName):
     file1.write("MSE of {}: {}".format(monthName, mse))
     file1.close()
 
-import simpy
+def generateGHData():
+    arr = ["Ch4", "Co2", "sf6", "n2o"]
+    i=0
+    for GH in [ch4Obj, co2Obj, sf6Obj, n2oObj]:
+        plt.clf()
+        actualData = pd.read_csv('../ActualGreenHouseData/{}Cumulative.csv'.format(arr[i]))
+        actualData.set_index('dt', inplace=True)
+        actualData.index = pd.to_datetime(actualData.index)
+        df = GH.getCumDf()
+        df.set_index('dt', drop=True, inplace=True)
+        df.index = pd.to_datetime(df.index)
+        plt.plot(df, markersize=8, linewidth=2, linestyle='dashed', label='predicted')
+        plt.plot(actualData, label='actual')
+        plt.legend()
+        plt.title("{} Over the years".format(arr[i]))
+        plt.savefig('{}/{}OverTheYears.png'.format(argumentHash['output'], arr[i]))
+        i+=1
+
 env = simpy.Environment()
 env.process(greenHouseGas(env))
 env.run(until=simTime)
 generateMonthData()
+generateGHData()
 
 

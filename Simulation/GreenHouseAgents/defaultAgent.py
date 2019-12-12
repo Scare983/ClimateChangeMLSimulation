@@ -82,6 +82,9 @@ class co2Control(ghgControl.ghgControl):
         return super().popNextRate()
     # calculate is called from main simulation.
     def calculateNextGh(self):
+        #chaosEnsue = self.checkChaos()
+        #policyEnsue = self.checkPolicy()
+
         rate = self.getGHRate()
         cumValue = super().getCumValue()
         #multiply by initial value
@@ -90,6 +93,7 @@ class co2Control(ghgControl.ghgControl):
         return GHval
 
     # create a GH diminishing policy to take effect in a time period (checks within this method, helper).  One the "grace period" is over, the rates are maintained.
+    #this is the function that should be changed in all classes to find different policies.
     def createPolicy(self):
         #check conditions if policy needs to be created.
         #if it needs to be created (the policy can be desired minimum average increase in a greenhouse gas), then set the minimum

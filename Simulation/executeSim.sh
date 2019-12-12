@@ -121,7 +121,6 @@ if [ -e  $filePath ];then
     fi
     mkdir "$fName" 2>/dev/null
     mkdir $fName/Jan $fName/Feb $fName/Mar $fName/Apr $fName/May $fName/Jun $fName/Jul $fName/Aug $fName/Sep $fName/Oct $fName/Nov $fName/Dec
-    echo "${ghArary[1]}"
     python mainCp.py -a $lat -o $long -s $simTime -0 ${ghArary[2]} -2 ${ghArary[1]}  -6 ${ghArary[3]} -4 ${ghArary[0]} -y $year -m $model -t $fName #2>/dev/null
     rm mainCp.py
 
