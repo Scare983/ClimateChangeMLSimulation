@@ -14,7 +14,7 @@ helpFunction() {
     echo ""
     echo "| Required Input -o (longitude) -a (latitude) -f (filename)                            "
     echo "Example: "
-    echo "  ./executeSim.sh -f (GHsamples/defaultAgent.py) -o (33.64) -a (77.34) -t (outputFolder) [-g -p -y (year) -m (b|l)] "
+    echo "  ./executeSim.sh -f (GHsamples/defaultAgent.py) -o (33.64) -a (77.34) -t (outputFolder) [-g -p -y (year) -m (b|l|a|z|e)] "
     echo "============================================================="
     exit 1 
 }

@@ -10,18 +10,12 @@ class ghgControl():
         self.addToCumSum(initialValue)
         self.baseRate = rates['rate'].to_list()
         #rate at which we may redact a policy.
-        self.chaosPercent = .01
-        # rate at which we may create a policy eachy month.
-        self.policPercent = .01
     def addToCumSum(self,  ghg):
         myDate = '{}-{}'.format(ghgControl.getSimDatetimeString().year, ghgControl.getSimDatetimeString().month)
         df = pd.DataFrame({'dt':[myDate], 'cumSum': [ghg]})
         self.cumValue = self.cumValue.append(df, ignore_index=True)
         ###increase chaos and policy rate here.
-    def getChaosPercent(self):
-        return self.chaosPercent
-    def getPolicyPercent(self):
-        return self.policPercent
+
     def getCumValue(self):
         return self.cumValue['cumSum'].values[-1]
     def getCumDf(self):
@@ -45,3 +39,5 @@ class ghgControl():
     def getSimDatetimeString():
         year, month = ghgControl.getSimTime()
         return datetime.datetime(year, month, 1)
+
+

@@ -67,16 +67,23 @@ except getopt.GetoptError:
 
 kMeansModel = joblib.load('../KMeansModel/KMeansModel.pkl')
 longLatHash = kMeansModel.predict( np.array([argumentHash['Lat'], argumentHash['Long']]).reshape(1,-1))
+print(longLatHash)
 monthModels = {'Jan': None, 'Feb': None, 'Mar': None, 'Apr': None, 'May': None, 'Jun': None, 'Jul': None, 'Aug': None, 'Sep': None,  'Oct': None, 'Nov': None, 'Dec':None }
 monthFName = ""
 if argumentHash['mlModel'] == 'l':
     monthFName = '../learnedLinModelByClusters/'
+elif  argumentHash['mlModel'] == 'z':
+    monthFName = '../learnedTreeModelByClusters/'
+elif argumentHash['mlModel'] == 'e':
+    monthFName = '../learnedEnsembleModelByClusters/'
+elif argumentHash['mlModel'] == 'a':
+    monthFName = '../learnedAdaModelByClusters/'
 else:
     monthFName = '../learnedBayLinModelByClusters/'
 monthDirList=os.listdir(monthFName)
 i = 0
 for key in monthModels.keys():
-    monthModels[monthDirList[i][0:3]] = joblib.load('{}/{}/{}linModel.pkl'.format(monthFName,monthDirList[i], *longLatHash))
+    monthModels[key] = joblib.load('{}/{}/{}linModel.pkl'.format(monthFName,key, *longLatHash))
     i+=1
 # 2 dots because this is being passed in.
 ghDirName = '../greenhouseRates'
@@ -106,10 +113,44 @@ n2oObj = GHContainer.n2oControl(n2oRatesFname, argumentHash['initialN2o'])
 ########
 def greenHouseGas(env):
     i=0
+    myGHG = ['ch4', 'co2', 'sf6', 'n2o']
     while env.now <= argumentHash['simTime']:
         timeOfMonth = env.now % 12
-        print("{}-{}".format(argumentHash['beginYear'], timeOfMonth+1))
+
+
+
         if timeOfMonth == 0:
+            chaos=""
+            policy=""
+            j=0
+            for GHG in [ch4Obj, co2Obj, sf6Obj, n2oObj]:
+                if GHG.chaosInProgress:
+                    if chaos:
+                        chaos=chaos + ", {}".format( myGHG[j])
+                    else:
+                        chaos=myGHG[j]
+                if GHG.policyInProgress:
+                    if policy:
+                        policy=policy + ", {}".format(myGHG[j])
+                    else:
+                        policy=myGHG[j]
+
+                j+=1
+            if chaos and policy:
+                policy="({})Policy".format(policy)
+                chaos="({})Chaos".format(chaos)
+                print("{}-{}: {}\t{}".format(argumentHash['beginYear'], timeOfMonth+1, chaos, policy))
+                pass
+            elif chaos:
+                chaos="({})Chaos".format(chaos)
+                print("{}-{}\t{}".format(argumentHash['beginYear'], timeOfMonth+1, chaos))
+                pass
+            elif policy:
+                policy="({})Policy".format(policy)
+                print("{}-{}:\t{}".format(argumentHash['beginYear'], timeOfMonth+1, policy))
+                pass
+            else:
+                pass
             if i != 0:
                 argumentHash['beginYear']=argumentHash['beginYear']+1
                 ghgControl.setSimTime(argumentHash['beginYear'], timeOfMonth+1)
