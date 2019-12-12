@@ -14,7 +14,7 @@ helpFunction() {
     echo ""
     echo "| Required Input -o (longitude) -a (latitude) -f (filename)                            "
     echo "Example: "
-    echo "  ./executeSim.sh -f GHsamples/defaultAgent.py -o 33.64 -a 77.34 [-g -p-y]"
+    echo "  ./executeSim.sh -f (GHsamples/defaultAgent.py) -o (33.64) -a (77.34) -t (outputFolder) [-g -p -y (year) -m (b|l)] "
     echo "============================================================="
     exit 1 
 }
@@ -27,7 +27,8 @@ pr=0
 long=0
 lat=0
 year=1960
-while getopts "f:o:a:gpy:h" opt; do
+model='b'
+while getopts "f:o:a:gpy:hm:" opt; do
   case "$opt" in
   f) filePath=$OPTARG
     ;;
@@ -43,6 +44,7 @@ while getopts "f:o:a:gpy:h" opt; do
     ;;
   h) helpFunction
     ;;
+  m) model=$OPTARG
   esac
 done
 if [ -z "$filePath" ]; then
@@ -102,14 +104,26 @@ if [ -e  $filePath ];then
     # randomize intiial values.
     if (("$ghr" == 1 )); then
       for index1 in 0 1 2 3 ; do
-        ghArary["$index1"]=$(python randomNumberGen.py "${ghArary[$index1]}")
-      done
+        ghArary["$index1"]="$(python randomNumberGen.py "${ghArary[$index1]}")"
 
+
+      done
     fi
     simTime=$(((2014-"$year") * 12 + 12 ))
     #pass in SimTime.
-    python mainCp.py -a "$lat" -o "$long" -s "$simTime" -4 ${ghArary[0]}  -0 ${ghArary[2]} -2 ${ghArary[1]}  -6 ${ghArary[3]} -y "$year"
-
+    fName="SimResults/$fName-$year-$model-$ghr-$pr-0"
+    if [[ -e "$fName" ]] ; then
+    i=0
+    while [[ -e "$fName-$i" ]] ; do
+        let i++
+    done
+    fName="$fName-$i"
+    fi
+    mkdir "$fName" 2>/dev/null
+    mkdir $fName/Jan $fName/Feb $fName/Mar $fName/Apr $fName/May $fName/Jun $fName/Jul $fName/Aug $fName/Sep $fName/Oct $fName/Nov $fName/Dec
+    echo "${ghArary[1]}"
+    python mainCp.py -a $lat -o $long -s $simTime -0 ${ghArary[2]} -2 ${ghArary[1]}  -6 ${ghArary[3]} -4 ${ghArary[0]} -y $year -m $model -t $fName #2>/dev/null
+    rm mainCp.py
 
 else 
     helpFunction
