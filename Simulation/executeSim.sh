@@ -80,16 +80,16 @@ if [ -e  $filePath ];then
     #TODO:  if random is added, change initial GH in main.py
     #TODO: and rates in GreenHouseAgents/ghgControl.py
     # if year not 1960, we have to calculate an initial value using default data.
-    cp ../greenHouseRates/OrigGhRates/* ../greenHouseRates/
+    cp ../greenhouseRates/OrigGhRates/* ../greenhouseRates/
     if [ "$year" != "1960" ]; then
-      diff1=$((("$year"-1960)*12 + 1 ))
+      diff1=$(( $(($year-1960))*12 + 1 ))
       diff=$(("diff1" -1))
       index=0
       for file in $(ls -p ../greenHouseRates | grep -v /); do
         valuesToSum=$(head -"$diff1" "../greenHouseRates/$file" | tail -"$diff" |  sed "s/.*,//")
         #remove the lines we are calculating so that calulcations done in Simulation have accurate rates to start with.
-        sed -i "2,"$(($diff+1))"d" "../greenHouseRates/$file"
-        sed -i "2 s/,.*/,0.0/" "../greenHouseRates/$file"
+        sed -i "2,"$(($diff+1))"d" "../greenHouseRates/$file" 2>/dev/null
+        sed -i "2 s/,.*/,0.0/" "../greenHouseRates/$file" 2>/dev/null
         echo "Calculating new initial GH Values because different date was given..."
         for line in $valuesToSum;do
           value=$(echo "$line")
@@ -109,14 +109,16 @@ if [ -e  $filePath ];then
 
       done
     fi
-    simTime=$(((2014-"$year") * 12 + 12 ))
+    simTime=$(( $((2014-$year)) * 12 + 12  ))
     #pass in SimTime.
     fName="SimResults/$fName-$year-$model-$ghr-$pr-0"
+
     if [[ -e "$fName" ]] ; then
     i=0
     while [[ -e "$fName-$i" ]] ; do
         let i++
     done
+
     fName="$fName-$i"
     fi
     mkdir "$fName" 2>/dev/null
