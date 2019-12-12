@@ -334,7 +334,7 @@ def generateMonthData():
 def calculateMSE(joinedDf, monthName):
     mse = np.square(np.subtract(joinedDf['average'].to_list(), joinedDf['predTemp'].to_list())).mean()
     file1=open(r"{}/{}/MSE.txt".format(argumentHash['output'], monthName), "w+")
-    file1.write("MSE of {}: {}".format(monthName, mse))
+    file1.write("{}".format(mse))
     file1.close()
 
 def generateGHData():
