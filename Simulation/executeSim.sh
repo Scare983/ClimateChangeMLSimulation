@@ -62,14 +62,15 @@ if (("$year" > 1959 )) && (("$year" <= 2014 )); then
 else
   helpFunction
 fi
+
 if [ -e  $filePath ];then
 # Here is where we change things.  
     cp main.py mainCp.py
     #module="$(echo "$filePath" | sed  "s/\//./g")"
-    module="$(echo $filePath | sed -r 's/(.*)\/+.*.py/\1/')"
-    module="$(echo $module | sed -r 's/\//\./g')"
+    module="$(echo $filePath | sed -r 's/(.*)\/+.*\.py/\1/')"
+    module="$(echo $module | sed -r 's/\./\//g')"
     #module="$(echo $filePath | sed  "s/\//./g")" 
-    fName="$(echo $filePath |  sed -r 's/([A-z]+\/)+(.*).py/\2/')"
+    fName="$(echo $filePath |  sed -r 's/.*\/(.*).py/\1/')"
     sed -i "s/import GreenHouseAgents.defaultAgent/import $module.$fName/" mainCp.py
     #these values were calculated from Analysis.py which looks at all the greenhouse gases.
     initialSf6=0.000005
