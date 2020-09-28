@@ -1,5 +1,9 @@
+----------------------
 Author:  Kevin Linnane
+YouTube Demo:
+https://www.youtube.com/watch?v=d8bV1liDciw&t=2s
 
+----------------------
 This is an extensive project that relates Machine learning with a simulation attached.  
 Or to say, the two go hand in hand and results could not be avaliable without the help of both.
 
@@ -11,7 +15,12 @@ Analysis.ipynb is used to create and save the machine learning models we will be
 
 To run the Simulation there are currently three agents which generate Greenhouse gas data for the Machine learning models.  
 There are usage statements for guidance...
+------------------
+To look at ML model analysis and model creation:
+download jupyter notebook and open .ipynb with jupyter
 
+To Run Simulation
+------------------
 Step 1) 
 cd Simulation 
 
